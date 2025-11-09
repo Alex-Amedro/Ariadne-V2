@@ -1,0 +1,25 @@
+# Fichiers Temporaires et d'Environnement Python
+# ===============================================
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.DS_Store
+
+# Fichiers PyTorch / Stable-Baselines3 (Les "cerveaux" trop volumineux)
+# ===============================================================
+# Vous ne devez pas sauvegarder ces fichiers sur Git, ils sont trop lourds.
+# Utilisez GitHub LFS ou un service de cloud pour les partager, mais Git doit les ignorer.
+*.zip # Modèles Stable-Baselines3 (PPO)
+*.pth # Modèles PyTorch
+*.pt
+*.h5
+*.onnx
+
+# Fichiers de Log et de Sauvegarde
+# ================================
+logs/
+checkpoints/
+generated_levels/ # Les niveaux temporairement générés
+data/
+artifacts/ # Dossier de sortie général

@@ -1,0 +1,13 @@
+# Core ML/RL
+torch
+stable-baselines3[extra]
+gymnasium
+
+# Environnement de Jeu
+nes-py==8.1.8
+gym-super-mario-bros==7.4.0
+
+# Outils de Calcul et de Data (pour les métriques et le générateur)
+numpy
+scikit-image
+matplotlib
