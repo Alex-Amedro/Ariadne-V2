@@ -24,3 +24,4 @@ checkpoints/
 generated_levels/ # Les niveaux temporairement générés
 data/
 artifacts/ # Dossier de sortie général
+src/builder/ML/generator_test.pth
