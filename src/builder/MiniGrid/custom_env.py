@@ -106,7 +106,7 @@ if __name__ == "__main__":
         # PyGame lèvera une erreur, et on l'attrapera.
         try:
             env.render() 
-            time.sleep(1) # Pause de 1s pour voir
+            time.sleep(3) # Pause de 1s pour voir
             
         except Exception as e:
             # L'exception est souvent 'pygame.error: display Surface quit'
