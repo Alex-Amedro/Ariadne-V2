@@ -1,16 +1,17 @@
 import gymnasium as gym
-# Doit être importé pour enregistrer les envs, mais on l'utilise aussi pour le wrapper
-import gymnasium_minigrid 
-# 1. CORRECTION DE L'IMPORT :
-# On utilise le wrapper qui vient de gymnasium_minigrid
-from gymnasium_minigrid.wrappers import ImgObsWrapper
+# CORRECTION 1: On importe le paquet 'minigrid' moderne
+import minigrid 
+# CORRECTION 1: Le wrapper est dans 'minigrid.wrappers'
+from minigrid.wrappers import ImgObsWrapper
 
 from stable_baselines3 import PPO
 from stable_baselines3.common.vec_env import DummyVecEnv
 from stable_baselines3.common.utils import set_random_seed
-from stable_baselines3.common.torch_layers import CnnFeaturesExtractor
-import torch.nn as nn
 
+# CORRECTION 2: Le chemin d'import a changé dans SB3 !
+from stable_baselines3.common.features_extractor import CnnFeaturesExtractor
+
+import torch.nn as nn
 import os
 
 # --- Configuration ---
@@ -26,8 +27,9 @@ os.makedirs(MODEL_DIR, exist_ok=True)
 
 def make_env(env_id, seed):
     def _init():
+        # On utilise gym.make, qui fonctionne grâce à 'import minigrid'
         env = gym.make(env_id)
-        # On utilise le ImgObsWrapper
+        # On utilise le ImgObsWrapper de 'minigrid.wrappers'
         env = ImgObsWrapper(env)
         env.reset(seed=seed)
         return env
@@ -45,26 +47,16 @@ if __name__ == "__main__":
     seed = 0
     vec_env = DummyVecEnv([make_env(ENV_NAME, seed)])
 
-    # 2. CORRECTION DU CNN (LE CŒUR DU PROBLÈME)
-    # L'architecture CNN par défaut de SB3 (pour Atari) est trop grande (kernel 8x8)
-    # pour nos observations 7x7. Nous devons en définir une plus petite.
-    
-    # Définition d'un dictionnaire pour les "policy_kwargs"
-    # C'est ici qu'on dit à PPO : "N'utilise pas ton CNN par défaut !"
+    # On utilise toujours le CNN personnalisé car l'image est en 7x7
     policy_kwargs = dict(
         features_extractor_class=CnnFeaturesExtractor,
         features_extractor_kwargs=dict(
-            # On définit un réseau de convolution simple et petit
-            # adapté à nos images 7x7
             cnn_layers=[
-                # Couche 1: 16 filtres, kernel 3x3, stride 1, padding 1
                 dict(filters=16, kernel_size=3, stride=1, padding=1),
                 nn.ReLU(),
-                # Couche 2: 32 filtres, kernel 2x2, stride 1, padding 0
                 dict(filters=32, kernel_size=2, stride=1, padding=0),
                 nn.ReLU(),
             ],
-            # SB3 s'occupera de la couche "Flatten" et du MLP final
         ),
     )
 
@@ -72,9 +64,9 @@ if __name__ == "__main__":
     model = PPO(
         "CnnPolicy",
         vec_env,
-        policy_kwargs=policy_kwargs, # <--- On passe notre CNN personnalisé ici
+        policy_kwargs=policy_kwargs, 
         verbose=1,
-        tensorboard_log=LOG_DIR
+        tensor_log=LOG_DIR  # Note: c'est 'tensorboard_log', pas 'tensor_log'
     )
 
     # --- Lancement de l'entraînement ---
