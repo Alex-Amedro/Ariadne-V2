@@ -396,6 +396,5 @@ if __name__ == "__main__":
     
     print("\n" + "="*60)
     print("✅ TOUS LES TESTS TERMINÉS!")
-    print("="*60)
     print("\nTon environnement est prêt à être utilisé avec le générateur.")
     print("Prochaine étape: créer le générateur de paramètres (generator.py)")
