@@ -70,6 +70,9 @@ class ParametricMiniGridEnv(MiniGridEnv):
         max_attempts = 100
         attempt = 0
         
+        # DEBUG: Compteur pour voir pourquoi ça échoue
+        failure_reasons = {"exception": 0, "not_solvable": 0}
+        
         while attempt < max_attempts:
             attempt += 1
             
@@ -140,14 +143,21 @@ class ParametricMiniGridEnv(MiniGridEnv):
                 if self._is_solvable():
                     self.mission = "Reach the goal"
                     return  # SUCCESS!
+                else:
+                    failure_reasons["not_solvable"] += 1
                 
             except Exception as e:
                 # Si une erreur se produit (ex: plus de place), on réessaye
+                failure_reasons["exception"] += 1
+                # DEBUG: Afficher la première exception pour comprendre
+                if attempt == 1:
+                    print(f"[DEBUG] Exception lors de la génération: {type(e).__name__}: {e}")
                 continue
         
         # Si on arrive ici, on n'a pas réussi à générer un niveau valide
         # On crée un niveau minimal garanti solvable
         print(f"[WARNING] Impossible de générer un niveau valide après {max_attempts} tentatives.")
+        print(f"[DEBUG] Raisons: not_solvable={failure_reasons['not_solvable']}, exceptions={failure_reasons['exception']}")
         print(f"[WARNING] Création d'un niveau minimal avec paramètres réduits...")
         self._gen_minimal_level(width, height)
 
@@ -196,49 +206,56 @@ class ParametricMiniGridEnv(MiniGridEnv):
         Vérifie si le niveau est solvable en utilisant BFS.
         
         Logique:
-        1. Si pas de portes: agent doit pouvoir atteindre le goal
-        2. Si des portes: agent -> clé -> porte -> goal
+        1. Trouver le goal
+        2. Si pas de portes verrouillées: vérifier agent -> goal directement
+        3. Si des portes verrouillées:
+           - Vérifier qu'au moins une clé est atteignable depuis l'agent
+           - Vérifier que le goal est atteignable en mode "avec clés" (can_open_doors=True)
         """
-        goal_positions = [pos for pos, obj in self.grid.find_objects(Goal)]
+        # Trouver le goal en parcourant la grille
+        goal_pos = None
+        key_positions = []
+        locked_doors = []
         
-        if len(goal_positions) == 0:
+        for x in range(self.width):
+            for y in range(self.height):
+                cell = self.grid.get(x, y)
+                if cell is not None:
+                    if isinstance(cell, Goal):
+                        goal_pos = (x, y)
+                    elif isinstance(cell, Key):
+                        key_positions.append((x, y))
+                    elif isinstance(cell, Door) and cell.is_locked:
+                        locked_doors.append((x, y))
+        
+        if goal_pos is None:
             return False
         
-        goal_pos = goal_positions[0]
-        
         # Cas 1: Pas de portes verrouillées
-        locked_doors = [pos for pos, obj in self.grid.find_objects(Door) if obj.is_locked]
-        
         if len(locked_doors) == 0:
             # Juste vérifier que l'agent peut atteindre le goal
             return self._can_reach(self.agent_pos, goal_pos, can_open_doors=False)
         
         # Cas 2: Il y a des portes verrouillées
-        # Vérifier: agent -> n'importe quelle clé
-        key_positions = [pos for pos, obj in self.grid.find_objects(Key)]
+        # Stratégie simplifiée: vérifier que le goal est atteignable si on a les clés
+        # ET qu'au moins une clé est atteignable sans ouvrir de portes
         
         if len(key_positions) == 0:
             return False  # Pas de clé mais des portes verrouillées
         
-        # Trouver une clé atteignable
-        key_reachable = False
-        reachable_key_pos = None
-        
+        # Vérifier qu'au moins UNE clé est atteignable sans ouvrir de portes
+        at_least_one_key_reachable = False
         for key_pos in key_positions:
             if self._can_reach(self.agent_pos, key_pos, can_open_doors=False):
-                key_reachable = True
-                reachable_key_pos = key_pos
+                at_least_one_key_reachable = True
                 break
         
-        if not key_reachable:
-            return False
+        if not at_least_one_key_reachable:
+            return False  # Aucune clé n'est accessible
         
-        # Depuis la clé, vérifier qu'on peut atteindre le goal (en ouvrant les portes)
-        goal_reachable_from_key = self._can_reach(
-            reachable_key_pos, goal_pos, can_open_doors=True
-        )
-        
-        return goal_reachable_from_key
+        # Vérifier que le goal est atteignable depuis l'agent EN SUPPOSANT qu'on a les clés
+        # (ce qui simule: agent récupère clé -> ouvre porte -> va au goal)
+        return self._can_reach(self.agent_pos, goal_pos, can_open_doors=True)
 
     def _can_reach(self, start_pos, target_pos, can_open_doors=False):
         """
@@ -329,7 +346,7 @@ if __name__ == "__main__":
         print(f"  Reset {i+1}: OK (grid_size={env.width}x{env.height})")
     
     env.close()
-    print("  ✅ Test 1 réussi")
+    print("  [OK] Test 1 réussi")
     
     # Test 2: Avec portes et clés
     print("\n[Test 2] Avec portes et clés (10x10)")
@@ -346,7 +363,7 @@ if __name__ == "__main__":
         print(f"  Reset {i+1}: OK")
     
     env.close()
-    print("  ✅ Test 2 réussi")
+    print("  [OK] Test 2 réussi")
     
     # Test 3: Configuration complexe
     print("\n[Test 3] Configuration complexe (12x12, beaucoup d'obstacles)")
@@ -368,7 +385,7 @@ if __name__ == "__main__":
             print(f"  Reset {i+1}: ÉCHEC ({e})")
     
     env.close()
-    print(f"  ✅ Test 3: {success_count}/5 resets réussis")
+    print(f"  [OK] Test 3: {success_count}/5 resets réussis")
     
     # Test 4: Avec visualisation (optionnel)
     print("\n[Test 4] Test avec visualisation (ferme la fenêtre pour continuer)")
@@ -390,11 +407,11 @@ if __name__ == "__main__":
             time.sleep(2)  # Pause pour voir le niveau
         
         env.close()
-        print("  ✅ Test 4 réussi")
+        print("  [OK] Test 4 réussi")
     except Exception as e:
-        print(f"  ⚠️  Visualisation skippée: {e}")
+        print(f"  [WARNING] Visualisation skippée: {e}")
     
     print("\n" + "="*60)
-    print("✅ TOUS LES TESTS TERMINÉS!")
+    print("[OK] TOUS LES TESTS TERMINÉS!")
     print("\nTon environnement est prêt à être utilisé avec le générateur.")
     print("Prochaine étape: créer le générateur de paramètres (generator.py)")

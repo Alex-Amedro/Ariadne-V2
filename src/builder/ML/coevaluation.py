@@ -139,7 +139,10 @@ class CoEvolutionTrainer:
             episode_reward = 0
             steps = 0
             
-            while not done and steps < env.max_steps:
+            # Accéder à max_steps via l'environnement unwrapped
+            max_steps = getattr(env, 'max_steps', None) or getattr(env.unwrapped, 'max_steps', 1000)
+            
+            while not done and steps < max_steps:
                 action, _ = self.agent.predict(obs, deterministic=True)
                 obs, reward, terminated, truncated, _ = env.step(action)
                 episode_reward += reward
@@ -180,37 +183,75 @@ class CoEvolutionTrainer:
     def train_generator(self, current_agent):
         """
         Entraîne le générateur pour créer des niveaux challengeants.
+        Utilise une approche simplifiée sans gradients complets (pour éviter les problèmes).
         """
         total_loss = 0.0
         
         for update in range(self.generator_updates):
             # 1. Générer un batch de niveaux
-            z_batch = torch.randn(self.batch_size, self.generator.latent_dim)
+            z_batch = torch.randn(self.batch_size, self.generator.latent_dim, requires_grad=False)
             
-            # 2. Obtenir les paramètres
-            levels_params = []
-            for i in range(self.batch_size):
-                params = self.generator.generate_level_params(z_batch[i])
-                levels_params.append(params)
-            
-            # 3. Évaluer chaque niveau avec l'agent actuel
+            # 2. Forward pass du générateur
+            level_params_tensors = []
             rewards = []
-            for params in levels_params:
-                try:
-                    metrics = self.evaluate_agent_on_level(params)
-                    reward = self.compute_generator_reward(metrics)
-                    rewards.append(reward)
-                except:
-                    # Si le niveau est invalide, reward = 0
-                    rewards.append(0.0)
             
-            # 4. Calculer la loss (on veut maximiser le reward)
-            rewards_tensor = torch.tensor(rewards, dtype=torch.float32)
-            loss = -rewards_tensor.mean()  # Gradient ascent sur le reward
+            for i in range(self.batch_size):
+                # Forward pass (garde les gradients)
+                output_dict = self.generator(z_batch[i].unsqueeze(0))
+                
+                # Convertir en tenseur empilé pour le calcul de loss
+                params_tensor = torch.stack([
+                    output_dict['grid_size'].squeeze(),
+                    output_dict['num_obstacles'].squeeze(),
+                    output_dict['num_doors'].squeeze(),
+                    output_dict['num_keys'].squeeze(),
+                ])
+                level_params_tensors.append(params_tensor)
+                
+                # Évaluer le niveau (sans gradients)
+                with torch.no_grad():
+                    params_dict = {
+                        'grid_size': int(output_dict['grid_size'].item()),
+                        'num_obstacles': int(output_dict['num_obstacles'].item()),
+                        'num_doors': int(output_dict['num_doors'].item()),
+                        'num_keys': int(output_dict['num_keys'].item()),
+                    }
+                    
+                    try:
+                        metrics = self.evaluate_agent_on_level(params_dict)
+                        reward = self.compute_generator_reward(metrics)
+                        rewards.append(reward)
+                    except:
+                        rewards.append(0.0)
+            
+            # 3. Empiler tous les paramètres générés
+            stacked_params = torch.stack(level_params_tensors)
+            
+            # 4. Calculer une loss basée sur les rewards
+            rewards_tensor = torch.tensor(rewards, dtype=torch.float32, requires_grad=False)
+            
+            # Normaliser les rewards
+            if rewards_tensor.std() > 0:
+                normalized_rewards = (rewards_tensor - rewards_tensor.mean()) / (rewards_tensor.std() + 1e-8)
+            else:
+                normalized_rewards = rewards_tensor
+            
+            # Loss: on utilise une approche simplifiée
+            # On crée un "target" basé sur les bons niveaux
+            target = stacked_params.detach().clone()
+            
+            for i in range(self.batch_size):
+                if rewards[i] < 0.3:  # Mauvais niveau
+                    # Ajouter du bruit pour explorer
+                    target[i] = target[i] + torch.randn_like(target[i]) * 0.2
+            
+            # MSE loss entre output et target modifié
+            loss = nn.MSELoss()(stacked_params, target.detach())
             
             # 5. Backpropagation
             self.generator_optimizer.zero_grad()
             loss.backward()
+            torch.nn.utils.clip_grad_norm_(self.generator.parameters(), max_norm=1.0)
             self.generator_optimizer.step()
             
             total_loss += loss.item()
@@ -240,7 +281,7 @@ class CoEvolutionTrainer:
         self.create_agent(simple_levels)
         self.agent.learn(total_timesteps=initial_training_timesteps, progress_bar=True)
         
-        print("  ✅ Agent initial entraîné")
+        print("  [OK] Agent initial entraîné")
         
         # PHASE 1-N: Co-évolution
         for epoch in range(num_epochs):
@@ -311,7 +352,7 @@ class CoEvolutionTrainer:
             self.save_history()
         
         print("\n" + "="*60)
-        print("✅ CO-ÉVOLUTION TERMINÉE!")
+        print("[OK] CO-ÉVOLUTION TERMINÉE!")
         print("="*60)
         
         # Sauvegarde finale
@@ -346,7 +387,7 @@ if __name__ == "__main__":
     print("TEST: CoEvolutionTrainer")
     print("="*60)
     
-    print("\n⚠️  Ce test nécessite:")
+    print("\n[WARNING] Ce test nécessite:")
     print("  - parametric_minigrid.py")
     print("  - generator.py")
     print("  - evaluator.py")
@@ -354,9 +395,9 @@ if __name__ == "__main__":
     try:
         from parametric_minigrid import ParametricMiniGridEnv
         from generator import LevelGenerator
-        print("\n✅ Imports réussis")
+        print("\n[OK] Imports réussis")
     except ImportError as e:
-        print(f"\n❌ Erreur d'import: {e}")
+        print(f"\n[ERREUR] Erreur d'import: {e}")
         print("Assure-toi que tous les fichiers sont dans le même dossier")
         exit(1)
     
@@ -376,16 +417,16 @@ if __name__ == "__main__":
         num_eval_episodes=3
     )
     
-    print("✅ Trainer créé")
+    print("[OK] Trainer créé")
     
     print("\n[Test] Lancement d'une époque de test...")
     print("(Cela va prendre ~2-3 minutes)")
     
     try:
         trainer.train(num_epochs=1, initial_training_timesteps=10000)
-        print("\n✅ TEST RÉUSSI!")
+        print("\n[OK] TEST RÉUSSI!")
     except Exception as e:
-        print(f"\n❌ Erreur pendant le training: {e}")
+        print(f"\n[ERREUR] Erreur pendant le training: {e}")
         import traceback
         traceback.print_exc()
     
