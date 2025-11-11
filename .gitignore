@@ -1,5 +1,6 @@
 # Fichiers Temporaires et d'Environnement Python
 # ===============================================
+rl_env/
 .venv/
 __pycache__/
 *.pyc
