@@ -1,0 +1,7 @@
+{
+  "agent_timesteps_per_epoch": 100000,
+  "generator_updates_per_epoch": 10,
+  "batch_size": 16,
+  "target_success_rate": 0.5,
+  "created_at": "2025-11-12T03:10:35.320246"
+}

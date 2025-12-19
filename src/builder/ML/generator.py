@@ -21,12 +21,24 @@ class LevelGenerator(nn.Module):
             nn.Linear(32, 6)  # 6 paramètres de sortie
         )
         
+        # Améliorer l'initialisation pour plus de diversité
+        self._init_weights()
+        
         # Paramètres pour normaliser les outputs
         self.min_grid_size = 8
         self.max_grid_size = 15
         self.max_obstacles = 15
         self.max_doors = 3
         self.max_keys = 3
+    
+    def _init_weights(self):
+        """Initialisation personnalisée pour plus de variance."""
+        for m in self.network.modules():
+            if isinstance(m, nn.Linear):
+                # Xavier/Glorot initialization avec gain augmenté
+                nn.init.xavier_normal_(m.weight, gain=2.0)
+                if m.bias is not None:
+                    nn.init.constant_(m.bias, 0)
         
     def forward(self, z):
         # Passer dans le réseau
@@ -55,7 +67,7 @@ class LevelGenerator(nn.Module):
             'goal_y': goal_y
         }
     
-    def generate_level_params(self, z=None, deterministic=False):
+    def generate_level_params(self, z=None, deterministic=False, debug=False):
         if z is None:
             if deterministic:
                 z = torch.zeros(self.latent_dim)
@@ -64,6 +76,10 @@ class LevelGenerator(nn.Module):
         
         with torch.no_grad():
             raw_params = self.forward(z)
+            
+            if debug:
+                print(f"[DEBUG generate_level_params] z[:5] = {z[:5].tolist()}")
+                print(f"[DEBUG generate_level_params] raw_params = {raw_params}")
             
             # Convertir en valeurs utilisables
             grid_size = int(raw_params['grid_size'].item())
@@ -87,7 +103,7 @@ class LevelGenerator(nn.Module):
                 'goal_position': (goal_x, goal_y)
             }
     
-    def generate_batch(self, batch_size=32):
+    def generate_batch(self, batch_size=32, debug=False):
         """
         Génère un batch de paramètres de niveaux.
         
@@ -96,9 +112,17 @@ class LevelGenerator(nn.Module):
         """
         z_batch = torch.randn(batch_size, self.latent_dim)
         
+        if debug:
+            print(f"[DEBUG generate_batch] z_batch shape: {z_batch.shape}")
+            print(f"[DEBUG generate_batch] z_batch[0] = {z_batch[0][:5].tolist()}")  # Premiers 5 éléments
+            print(f"[DEBUG generate_batch] z_batch[1] = {z_batch[1][:5].tolist()}")
+            print(f"[DEBUG generate_batch] z_batch variance: {z_batch.var().item():.4f}")
+        
         levels = []
         for i in range(batch_size):
             params = self.generate_level_params(z_batch[i])
+            if debug and i < 3:
+                print(f"[DEBUG] Niveau {i}: {params}")
             levels.append(params)
         
         return levels
