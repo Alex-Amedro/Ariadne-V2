@@ -1,0 +1,58 @@
+================================================================================
+RAPPORT D'ANALYSE - CO-ÉVOLUTION AGENT-GÉNÉRATEUR
+================================================================================
+
+CONFIGURATION DE L'ENTRAÎNEMENT
+--------------------------------------------------------------------------------
+  Époques totales : 20
+  Timesteps/epoch : 50000
+  Batch size : 16
+  Target success rate : 0.5
+  Date de création : 2025-12-29T03:59:29.522422
+
+SUCCESS RATE (Agent)
+--------------------------------------------------------------------------------
+  Mean : 0.593 ± 0.221
+  Median : 0.600
+  Range : [0.200, 0.867]
+  Q1-Q3 : [0.467, 0.800]
+  Initial : -0.007
+  Final : 0.800
+  Best : 0.867
+  Improvement : +0.600
+
+MEAN REWARD (Agent)
+--------------------------------------------------------------------------------
+  Mean : 0.581 ± 0.215
+  Range : [0.199, 0.845]
+  Final : 0.785
+  Improvement : +0.586
+
+DIVERSITY (Générateur)
+--------------------------------------------------------------------------------
+  Mean : 0.694 ± 0.120
+  Median : 0.688
+  Range : [0.438, 0.938]
+  Final : 0.625
+  Epochs avec diversité ≥70% : 9/20 (45.0%)
+
+CORRÉLATIONS
+--------------------------------------------------------------------------------
+  Diversity vs Success Rate : r=0.182, p=0.4421
+    → Corrélation non significative (p ≥ 0.05)
+
+CONVERGENCE VERS LA CIBLE (50%)
+--------------------------------------------------------------------------------
+  Distance moyenne à la cible : 0.210
+  Distance finale à la cible : 0.300
+  Époques avec SR ≥ 40% : 16/20
+  Époques dans zone cible (40-60%) : 7/20
+
+ANALYSE QUALITATIVE
+--------------------------------------------------------------------------------
+  Performance finale : EXCELLENTE (80.0%)
+  Tendance : Forte progression
+  Stabilité : Variable (std=0.221)
+  Qualité de la diversité : BONNE (mean=0.694)
+
+================================================================================

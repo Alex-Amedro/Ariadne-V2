@@ -1,0 +1,40 @@
+{
+  "success_rate": {
+    "mean": 0.5933333333333335,
+    "std": 0.22100779272334364,
+    "min": 0.2,
+    "max": 0.8666666666666666,
+    "median": 0.6,
+    "q1": 0.4666666666666666,
+    "q3": 0.8,
+    "final": 0.8,
+    "best": 0.8666666666666666,
+    "improvement": 0.6000000000000001
+  },
+  "mean_reward": {
+    "mean": 0.5810919925484487,
+    "std": 0.214930930096239,
+    "min": 0.19862244897959183,
+    "max": 0.845391156462585,
+    "final": 0.7854161352040816,
+    "improvement": 0.5864875637755101
+  },
+  "diversity": {
+    "mean": 0.69375,
+    "std": 0.12005857945186592,
+    "min": 0.4375,
+    "max": 0.9375,
+    "median": 0.6875,
+    "final": 0.625
+  },
+  "correlation": {
+    "diversity_vs_success": 0.18215703976210262,
+    "diversity_vs_success_pvalue": 0.4421056960185734
+  },
+  "convergence": {
+    "distance_to_target_mean": 0.20999999999999996,
+    "distance_to_target_final": 0.30000000000000004,
+    "epochs_above_40pct": 16,
+    "epochs_in_target_zone": 7
+  }
+}
