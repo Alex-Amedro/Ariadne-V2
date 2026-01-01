@@ -1,0 +1,65 @@
+{
+  "MiniGrid-Empty-5x5-v0": {
+    "name": "Empty 5x5",
+    "difficulty": "Easy",
+    "success_rate": 1.0,
+    "std_success": 0.0,
+    "mean_reward": 0.9549999999999997,
+    "mean_steps": 5.0,
+    "error": null
+  },
+  "MiniGrid-Empty-8x8-v0": {
+    "name": "Empty 8x8",
+    "difficulty": "Easy",
+    "success_rate": 0.0,
+    "std_success": 0.0,
+    "mean_reward": 0.0,
+    "mean_steps": 256.0,
+    "error": null
+  },
+  "MiniGrid-DoorKey-5x5-v0": {
+    "name": "DoorKey 5x5",
+    "difficulty": "Medium",
+    "success_rate": 0.0,
+    "std_success": 0.0,
+    "mean_reward": 0.0,
+    "mean_steps": 250.0,
+    "error": null
+  },
+  "MiniGrid-DoorKey-6x6-v0": {
+    "name": "DoorKey 6x6",
+    "difficulty": "Medium",
+    "success_rate": 0.0,
+    "std_success": 0.0,
+    "mean_reward": 0.0,
+    "mean_steps": 360.0,
+    "error": null
+  },
+  "MiniGrid-DoorKey-8x8-v0": {
+    "name": "DoorKey 8x8",
+    "difficulty": "Hard",
+    "success_rate": 0.0,
+    "std_success": 0.0,
+    "mean_reward": 0.0,
+    "mean_steps": 640.0,
+    "error": null
+  },
+  "MiniGrid-MultiRoom-N2-S4-v0": {
+    "name": "MultiRoom N2",
+    "difficulty": "Medium",
+    "success_rate": 0.0,
+    "std_success": 0.0,
+    "mean_reward": 0.0,
+    "mean_steps": 40.0,
+    "error": null
+  },
+  "MiniGrid-MultiRoom-N4-S5-v0": {
+    "name": "MultiRoom N4",
+    "difficulty": "Hard",
+    "success_rate": 0.0,
+    "std_success": 0.0,
+    "mean_reward": 0.0,
+    "mean_steps": 120.0,
+    "error": null
+  }
+}

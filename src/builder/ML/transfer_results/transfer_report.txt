@@ -1,0 +1,61 @@
+================================================================================
+RAPPORT DE TRANSFER LEARNING
+================================================================================
+
+Agent source: runs/run_20251229_035928
+
+STATISTIQUES GLOBALES
+--------------------------------------------------------------------------------
+  Nombre d'environnements testés: 7
+  Succès: 7/7
+  Success Rate Moyen: 0.143 ± 0.350
+  Meilleur: 1.000
+  Pire: 0.000
+
+EASY ENVIRONMENTS
+--------------------------------------------------------------------------------
+  Empty 5x5 (MiniGrid-Empty-5x5-v0)
+    Success Rate: 1.000 ± 0.000
+    Mean Reward: 0.955
+    Mean Steps: 5.0
+  Empty 8x8 (MiniGrid-Empty-8x8-v0)
+    Success Rate: 0.000 ± 0.000
+    Mean Reward: 0.000
+    Mean Steps: 256.0
+  Moyenne Easy: 0.500
+
+MEDIUM ENVIRONMENTS
+--------------------------------------------------------------------------------
+  DoorKey 5x5 (MiniGrid-DoorKey-5x5-v0)
+    Success Rate: 0.000 ± 0.000
+    Mean Reward: 0.000
+    Mean Steps: 250.0
+  DoorKey 6x6 (MiniGrid-DoorKey-6x6-v0)
+    Success Rate: 0.000 ± 0.000
+    Mean Reward: 0.000
+    Mean Steps: 360.0
+  MultiRoom N2 (MiniGrid-MultiRoom-N2-S4-v0)
+    Success Rate: 0.000 ± 0.000
+    Mean Reward: 0.000
+    Mean Steps: 40.0
+  Moyenne Medium: 0.000
+
+HARD ENVIRONMENTS
+--------------------------------------------------------------------------------
+  DoorKey 8x8 (MiniGrid-DoorKey-8x8-v0)
+    Success Rate: 0.000 ± 0.000
+    Mean Reward: 0.000
+    Mean Steps: 640.0
+  MultiRoom N4 (MiniGrid-MultiRoom-N4-S5-v0)
+    Success Rate: 0.000 ± 0.000
+    Mean Reward: 0.000
+    Mean Steps: 120.0
+  Moyenne Hard: 0.000
+
+ANALYSE
+--------------------------------------------------------------------------------
+  ⚠️  MOYEN transfer: Certaines compétences se transfèrent
+  Dégradation Easy→Hard: 0.500
+    → Sensible à la difficulté
+
+================================================================================
