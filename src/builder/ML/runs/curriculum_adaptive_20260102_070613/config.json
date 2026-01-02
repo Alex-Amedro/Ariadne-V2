@@ -1,0 +1,8 @@
+{
+  "type": "CURRICULUM (adaptive)",
+  "pacing_strategy": "adaptive",
+  "target_success_rate": 0.5,
+  "agent_timesteps_per_epoch": 60000,
+  "batch_size": 16,
+  "created_at": "2026-01-02T07:06:14.697867"
+}

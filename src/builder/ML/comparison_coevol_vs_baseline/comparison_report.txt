@@ -1,0 +1,34 @@
+================================================================================
+RAPPORT DE COMPARAISON CO-EVOLUTION vs BASELINE
+================================================================================
+
+CO-EVOLUTION
+--------------------------------------------------------------------------------
+  Success Rate Moyen : 0.593 ± 0.221
+  Success Rate Final : 0.800
+  Meilleur Score : 0.867
+  Amélioration : +0.600
+
+BASELINE (Random Levels)
+--------------------------------------------------------------------------------
+  Success Rate Moyen : 0.730 ± 0.176
+  Success Rate Final : 1.000
+  Meilleur Score : 1.000
+  Amélioration : +0.467
+
+COMPARAISON
+--------------------------------------------------------------------------------
+  Différence Moyenne : -0.137
+  Différence Finale : -0.200
+  Effect Size (Cohen's d) : -0.685
+  Test-t : t=-2.110, p=0.0415
+  ✅ Différence statistiquement SIGNIFICATIVE (p < 0.05)
+
+  Effect Size Interprétation : MOYEN
+
+CONCLUSION
+--------------------------------------------------------------------------------
+  ❌ La baseline performe aussi bien ou mieux que la co-évolution.
+     Le système de co-évolution n'apporte pas d'avantage mesurable.
+
+================================================================================

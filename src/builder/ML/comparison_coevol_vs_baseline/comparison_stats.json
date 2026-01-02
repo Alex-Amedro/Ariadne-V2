@@ -1,0 +1,26 @@
+{
+  "co_evolution": {
+    "mean_sr": 0.5933333333333335,
+    "std_sr": 0.22100779272334364,
+    "final_sr": 0.8,
+    "best_sr": 0.8666666666666666,
+    "improvement": 0.6000000000000001,
+    "mean_reward": 0.5810919925484487
+  },
+  "baseline": {
+    "mean_sr": 0.7299999999999999,
+    "std_sr": 0.175720738041296,
+    "final_sr": 1.0,
+    "best_sr": 1.0,
+    "improvement": 0.4666666666666667,
+    "mean_reward": 0.7140740649577094
+  },
+  "comparison": {
+    "t_statistic": -2.1098408877042254,
+    "p_value": 0.04151372756288894,
+    "significant": true,
+    "effect_size_cohen_d": -0.6845227743263381,
+    "mean_difference": -0.13666666666666638,
+    "final_difference": -0.19999999999999996
+  }
+}

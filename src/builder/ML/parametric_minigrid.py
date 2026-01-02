@@ -30,7 +30,8 @@ class ParametricMiniGridEnv(MiniGridEnv):
         max_steps=None,
         render_mode=None,
         agent_start_pos=None,  # Ajout: contrôle de la position de départ
-        see_through_walls=False
+        see_through_walls=False,
+        enable_reward_shaping=True  # Activer/désactiver reward shaping (pour ablations)
     ):
         
         # Validation des paramètres
@@ -45,6 +46,7 @@ class ParametricMiniGridEnv(MiniGridEnv):
         self.num_keys = int(num_keys)
         self.custom_goal_position = goal_position
         self.agent_start_pos_custom = agent_start_pos
+        self.enable_reward_shaping = enable_reward_shaping
         
         # Mission
         mission_space = MissionSpace(

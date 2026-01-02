@@ -196,7 +196,7 @@ def compare_performance(coevol_dir, baseline_dir, save_dir):
         'comparison': {
             't_statistic': float(t_stat),
             'p_value': float(p_value),
-            'significant': p_value < 0.05,
+            'significant': bool(p_value < 0.05),
             'effect_size_cohen_d': float((np.mean(coevol_sr) - np.mean(baseline_sr)) / 
                                         np.sqrt((np.std(coevol_sr)**2 + np.std(baseline_sr)**2) / 2)),
             'mean_difference': float(np.mean(coevol_sr) - np.mean(baseline_sr)),
