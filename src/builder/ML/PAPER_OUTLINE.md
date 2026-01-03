@@ -496,6 +496,10 @@ Diversity   73.3%   100.0%  92.3%   9.4%    100.0%
 
 ### 4.3 Statistical Tests
 
+**Purpose:**
+- Verify if differences between methods are real or just random chance
+- Quantify effect sizes (how big are the differences?)
+
 **t-tests (two-tailed):**
 ```
 Diversity vs Baseline:  t=4.603,  p<0.0001  ✓
@@ -503,61 +507,39 @@ Diversity vs Vanilla:   t=6.582,  p<0.0001  ✓
 Baseline vs Vanilla:    t=-2.110, p=0.0415  ✓
 ```
 
+**What This Means:**
+- **p < 0.0001:** Less than 0.01% chance results are random
+- **p = 0.0415:** 4.15% chance results are random (still significant at α=0.05)
+- All three comparisons: statistically significant differences exist
+
 **Effect Sizes (Cohen's d):**
 ```
-Diversity vs Baseline:  d=1.37   (large)
-Diversity vs Vanilla:   d=1.96   (very large)
-Baseline vs Vanilla:    d=-0.68  (medium)
+Diversity vs Baseline:  d=1.37   (large effect)
+Diversity vs Vanilla:   d=1.96   (very large effect)
+Baseline vs Vanilla:    d=-0.68  (medium effect)
 ```
+
+**What This Means:**
+- **d > 1.2:** Very large practical difference (not just statistical)
+- **d = 1.37:** Diversity beats baseline by ~1.37 standard deviations
+- **d = 1.96:** Diversity beats vanilla by ~2 standard deviations (huge!)
+- **d = -0.68:** Vanilla worse than baseline by ~0.7 std (moderate)
 
 **Interpretation:**
-- All differences statistically significant
-- Diversity shows very large improvements
-- Random baseline beats vanilla (medium effect)
+1. **Diversity >> Baseline:** Highly significant (p<0.0001) + very large effect (d=1.37)
+   - Not just statistically different, practically much better
+   
+2. **Diversity >> Vanilla:** Extremely significant (p<0.0001) + very large effect (d=1.96)
+   - Biggest improvement, strongest evidence
+   
+3. **Baseline > Vanilla:** Significant (p=0.0415) + medium effect (d=-0.68)
+   - Surprising: random sampling beats learned co-evolution
+   - Medium effect = meaningful practical difference
 
-##Example: 2 doors but 0 keys → agent CANNOT reach goal
-- Example: obstacles form wall → no path exists
-
-**Why This Happens:**
-- Generator outputs are continuous (sigmoid)
-- Round to integers: 1.9 → 1, 2.1 → 2
-- No guarantee of solvability
-
-**Solution (Two-Step Validation):**
-```python
-def is_solvable(level):
-    # Step 1: Logical constraint
-    if level['num_keys'] < level['num_doors']:
-        return False  # Can't open all doors
-    
-    # Step 2: Pathfinding check
-    # Build actual grid, run BFS from start to goal
-    grid = create_grid(level)
-    path = BFS(grid, start=(1,1), goal=(grid_size-2, grid_size-2))
-    
-    if path is None:
-        return False  # No path exists
-    
-    return True  # Level is valid
-
-# Usage:
-level = generator.generate()
-if not is_solvable(level):
-    level = generator.generate()  # Try again
-    # Repeat until valid (usually 1-3 attempts)
-```
-
-**BFS (Breadth-First Search) Explained:**
-- Start at agent position
-- Explore all neighbors (up/down/left/right)
-- Can pass through empty cells and keys
-- Can pass through doors IF we picked up enough keys
-- If we reach goal → solvable ✓
-- If we explored everything and no goal → unsolvable ✗
-
-**Implementation Detail:**
-```python
-def BFS(grid, start, goal):
+**Visual Representation:**
+- Figures show clear separation in box plots
+- Learning curves diverge significantly
+- Confidence intervals don't overlap
     queue = [(start, 0)]  # (position, keys_collected)
     visited = set()
     
