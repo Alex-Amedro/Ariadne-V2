@@ -11,10 +11,10 @@
   "MiniGrid-Empty-8x8-v0": {
     "name": "Empty 8x8",
     "difficulty": "Easy",
-    "success_rate": 0.0,
+    "success_rate": 1.0,
     "std_success": 0.0,
-    "mean_reward": 0.0,
-    "mean_steps": 256.0,
+    "mean_reward": 0.9613281250000002,
+    "mean_steps": 11.0,
     "error": null
   },
   "MiniGrid-DoorKey-5x5-v0": {

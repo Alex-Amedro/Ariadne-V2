@@ -2,13 +2,13 @@
 RAPPORT DE TRANSFER LEARNING
 ================================================================================
 
-Agent source: runs/run_20251229_035928
+Agent source: runs/diversity_20260102_043337
 
 STATISTIQUES GLOBALES
 --------------------------------------------------------------------------------
   Nombre d'environnements testés: 7
   Succès: 7/7
-  Success Rate Moyen: 0.143 ± 0.350
+  Success Rate Moyen: 0.286 ± 0.452
   Meilleur: 1.000
   Pire: 0.000
 
@@ -19,10 +19,10 @@ EASY ENVIRONMENTS
     Mean Reward: 0.955
     Mean Steps: 5.0
   Empty 8x8 (MiniGrid-Empty-8x8-v0)
-    Success Rate: 0.000 ± 0.000
-    Mean Reward: 0.000
-    Mean Steps: 256.0
-  Moyenne Easy: 0.500
+    Success Rate: 1.000 ± 0.000
+    Mean Reward: 0.961
+    Mean Steps: 11.0
+  Moyenne Easy: 1.000
 
 MEDIUM ENVIRONMENTS
 --------------------------------------------------------------------------------
@@ -55,7 +55,7 @@ HARD ENVIRONMENTS
 ANALYSE
 --------------------------------------------------------------------------------
   ⚠️  MOYEN transfer: Certaines compétences se transfèrent
-  Dégradation Easy→Hard: 0.500
+  Dégradation Easy→Hard: 1.000
     → Sensible à la difficulté
 
 ================================================================================
